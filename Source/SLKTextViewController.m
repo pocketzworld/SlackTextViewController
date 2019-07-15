@@ -591,6 +591,10 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     _textInputbar.bounces = bounces;
 }
 
+- (void)setIgnoreTabBarMargin:(BOOL)ignoreTabBarMargin {
+    _ignoreTabBarMargin = ignoreTabBarMargin;
+}
+
 - (void)slk_updateInsetAdjustmentBehavior
     {
         // Deactivate automatic scrollView adjustment for inverted table view
