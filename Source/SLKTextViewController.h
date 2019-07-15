@@ -83,6 +83,9 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
 /** YES if text view's content can be cleaned with a shake gesture. Default is NO. */
 @property (nonatomic, assign) BOOL shakeToClearEnabled;
 
+/** YES if tab bar should not be considered when calculating bottom margin. Default is NO. */
+@property (nonatomic, assign) BOOL ignoreTabBarMargin;
+
 /**
  YES if keyboard can be dismissed gradually with a vertical panning gesture. Default is YES.
  
