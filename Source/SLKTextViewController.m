@@ -42,6 +42,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 @property (nonatomic, strong) NSLayoutConstraint *typingIndicatorViewHC;
 @property (nonatomic, strong) NSLayoutConstraint *autoCompletionViewHC;
 @property (nonatomic, strong) NSLayoutConstraint *keyboardHC;
+@property (nonatomic, strong) NSLayoutConstraint *bottomAccessoryViewHC;
 
 // YES if the user is moving the keyboard with a gesture
 @property (nonatomic, assign, getter = isMovingKeyboard) BOOL movingKeyboard;
@@ -68,6 +69,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 @synthesize autoCompleting = _autoCompleting;
 @synthesize scrollViewProxy = _scrollViewProxy;
 @synthesize presentedInPopover = _presentedInPopover;
+@synthesize bottomAccessoryView = _bottomAccessoryView;
 
 #pragma mark - Initializer
 
@@ -176,6 +178,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     [self.view addSubview:self.autoCompletionView];
     [self.view addSubview:self.typingIndicatorProxyView];
     [self.view addSubview:self.textInputbar];
+    [self.view addSubview:self.bottomAccessoryView];
     
     [self slk_setupViewConstraints];
     
@@ -310,6 +313,26 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
         [_autoCompletionView addSubview:_autoCompletionHairline];
     }
     return _autoCompletionView;
+}
+
+- (UIView*)bottomAccessoryView {
+    if(!_bottomAccessoryView) {
+        _bottomAccessoryView = [[UIView alloc] initWithFrame:CGRectZero];
+        _bottomAccessoryView.translatesAutoresizingMaskIntoConstraints = NO;
+        _bottomAccessoryView.backgroundColor = [UIColor clearColor];
+    }
+    return _bottomAccessoryView;
+}
+
+- (void)setBottomAccessoryViewHeight:(CGFloat)bottomAccessoryViewHeight {
+    _bottomAccessoryViewHeight = bottomAccessoryViewHeight;
+    self.bottomAccessoryViewHC.constant = bottomAccessoryViewHeight;
+    self.scrollViewHC.constant = [self slk_appropriateScrollViewHeight];
+
+    [self.view setNeedsLayout];
+    [UIView animateWithDuration:0.25 animations:^{
+        [self.view layoutIfNeeded];
+    }];
 }
 
 - (SLKTextInputbar *)textInputbar
@@ -453,11 +476,11 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 {
     CGFloat scrollViewHeight = CGRectGetHeight(self.view.bounds);
     
-    scrollViewHeight -= self.keyboardHC.constant;
+    scrollViewHeight -= MAX(self.keyboardHC.constant, self.bottomAccessoryViewHC.constant);
     scrollViewHeight -= self.textInputbarHC.constant;
     scrollViewHeight -= self.autoCompletionViewHC.constant;
     scrollViewHeight -= self.typingIndicatorViewHC.constant;
-    
+
     if (scrollViewHeight < 0) return 0;
     else return scrollViewHeight;
 }
@@ -2261,24 +2284,32 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 - (void)slk_setupViewConstraints
 {
     NSDictionary *views = @{@"scrollView": self.scrollViewProxy,
-                            @"autoCompletionView": self.autoCompletionView,
-                            @"typingIndicatorView": self.typingIndicatorProxyView,
-                            @"textInputbar": self.textInputbar
-                            };
+    @"autoCompletionView": self.autoCompletionView,
+    @"typingIndicatorView": self.typingIndicatorProxyView,
+    @"textInputbar": self.textInputbar,
+    @"bottomAccessoryView": self.bottomAccessoryView
+    };
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[scrollView(0@750)][typingIndicatorView(0)]-0@999-[textInputbar(0)]|" options:0 metrics:nil views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0)-[autoCompletionView(0@750)][typingIndicatorView]" options:0 metrics:nil views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|" options:0 metrics:nil views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[autoCompletionView]|" options:0 metrics:nil views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[typingIndicatorView]|" options:0 metrics:nil views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[textInputbar]|" options:0 metrics:nil views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[scrollView(0@750)][typingIndicatorView(0)]-0-[textInputbar(0)]->=0-[bottomAccessoryView(0)]|" options:0 metrics:nil views:views]];
     
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.textInputbar attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
+    bottomConstraint.priority = 750;
+    [self.view addConstraint:bottomConstraint];
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[bottomAccessoryView]|" options:0 metrics:nil views:views]];
+    self.bottomAccessoryViewHC = [self.view slk_constraintForAttribute:NSLayoutAttributeHeight firstItem:self.bottomAccessoryView secondItem:nil];
+
     self.scrollViewHC = [self.view slk_constraintForAttribute:NSLayoutAttributeHeight firstItem:self.scrollViewProxy secondItem:nil];
     self.autoCompletionViewHC = [self.view slk_constraintForAttribute:NSLayoutAttributeHeight firstItem:self.autoCompletionView secondItem:nil];
     self.typingIndicatorViewHC = [self.view slk_constraintForAttribute:NSLayoutAttributeHeight firstItem:self.typingIndicatorProxyView secondItem:nil];
     self.textInputbarHC = [self.view slk_constraintForAttribute:NSLayoutAttributeHeight firstItem:self.textInputbar secondItem:nil];
     self.keyboardHC = [self.view slk_constraintForAttribute:NSLayoutAttributeBottom firstItem:self.view secondItem:self.textInputbar];
-    
+
     [self slk_updateViewConstraints];
 }
 
@@ -2287,6 +2318,7 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
     self.textInputbarHC.constant = self.textInputbar.hidden ? 0.0 : self.textInputbar.minimumInputbarHeight;
     self.scrollViewHC.constant = [self slk_appropriateScrollViewHeight];
     self.keyboardHC.constant = [self slk_appropriateKeyboardHeightFromRect:CGRectNull];
+    self.bottomAccessoryViewHC.constant = self.bottomAccessoryViewHeight;
     
     if (_textInputbar.isEditing) {
         self.textInputbarHC.constant += self.textInputbar.editorContentViewHeight;

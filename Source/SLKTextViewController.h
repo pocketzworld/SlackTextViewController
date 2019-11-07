@@ -125,6 +125,8 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
 @property (nonatomic, readonly) UIButton *leftButton;
 @property (nonatomic, readonly) UIButton *rightButton;
 
+@property (nonatomic, readonly) UIView *bottomAccessoryView;
+@property (nonatomic, assign) CGFloat bottomAccessoryViewHeight;
 
 #pragma mark - Initialization
 ///------------------------------------------------
