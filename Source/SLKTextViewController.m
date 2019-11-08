@@ -476,11 +476,11 @@ CGFloat const SLKAutoCompletionViewDefaultHeight = 140.0;
 {
     CGFloat scrollViewHeight = CGRectGetHeight(self.view.bounds);
     
-    scrollViewHeight -= MAX(self.keyboardHC.constant, self.bottomAccessoryViewHC.constant);
+    scrollViewHeight -= MAX(self.view.safeAreaInsets.bottom, MAX(self.keyboardHC.constant, self.bottomAccessoryViewHC.constant));
     scrollViewHeight -= self.textInputbarHC.constant;
     scrollViewHeight -= self.autoCompletionViewHC.constant;
     scrollViewHeight -= self.typingIndicatorViewHC.constant;
-
+    
     if (scrollViewHeight < 0) return 0;
     else return scrollViewHeight;
 }
