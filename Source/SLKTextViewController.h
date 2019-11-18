@@ -44,6 +44,10 @@ typedef NS_ENUM(NSUInteger, SLKKeyboardStatus) {
     SLKKeyboardStatusWillHide
 };
 
+@interface SLKTextPassthroughView : UIView
+@property (nonatomic, assign) BOOL allowPassthrough;
+@end
+
 /** @name A drop-in UIViewController subclass with a growing text input view and other useful messaging features. */
 NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController <SLKTextViewDelegate, UITableViewDelegate, UITableViewDataSource,
                                                                                 UICollectionViewDelegate, UICollectionViewDataSource,
@@ -127,6 +131,8 @@ NS_CLASS_AVAILABLE_IOS(7_0) @interface SLKTextViewController : UIViewController 
 
 @property (nonatomic, readonly) UIView *bottomAccessoryView;
 @property (nonatomic, assign) CGFloat bottomAccessoryViewHeight;
+
+@property (nonatomic, strong, nullable) NSNumber *targetScrollViewHeight;
 
 #pragma mark - Initialization
 ///------------------------------------------------
