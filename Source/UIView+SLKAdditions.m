@@ -32,7 +32,7 @@
               initialSpringVelocity:0.7
                             options:options
                          animations:^{
-                             [self layoutIfNeeded];
+                             [self setNeedsLayout];
                              
                              if (animations) {
                                  animations();
@@ -45,7 +45,7 @@
                               delay:0.0
                             options:options
                          animations:^{
-                             [self layoutIfNeeded];
+                             [self setNeedsLayout];
                              
                              if (animations) {
                                  animations();
