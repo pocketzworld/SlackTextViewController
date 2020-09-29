@@ -371,7 +371,7 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
 
 - (BOOL)slk_shouldHidePlaceholder
 {
-    if (self.placeholder.length == 0 || self.text.length > 0) {
+    if (self.placeholderText.length == 0 || self.text.length > 0) {
         return YES;
     }
     return NO;
