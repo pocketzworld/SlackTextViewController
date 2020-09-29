@@ -150,7 +150,7 @@ static NSString *const SLKTextViewGenericFormattingSelectorPrefix = @"slk_format
     return _placeholderLabel;
 }
 
-- (NSString *)placeholder
+- (NSString *)placeholderText
 {
     return self.placeholderLabel.text;
 }
@@ -393,10 +393,10 @@ SLKPastableMediaType SLKPastableMediaTypeFromNSString(NSString *string)
 
 #pragma mark - Setters
 
-- (void)setPlaceholder:(NSString *)placeholder
+- (void)setPlaceholderText:(NSString *)placeholderText
 {
-    self.placeholderLabel.text = placeholder;
-    self.accessibilityLabel = placeholder;
+    self.placeholderLabel.text = placeholderText;
+    self.accessibilityLabel = placeholderText;
     
     [self setNeedsLayout];
 }
