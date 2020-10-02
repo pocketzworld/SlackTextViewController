@@ -63,6 +63,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** The most appropriate height calculated based on the amount of lines of text and other factors. */
 @property (nonatomic, readonly) CGFloat appropriateHeight;
 
+/** Whether the left button should be constrained to the image only. Default is YES. */
+@property (nonatomic, assign) BOOL imageOnlyLeftButton;
+
 
 #pragma mark - Initialization
 ///------------------------------------------------
@@ -149,4 +152,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-

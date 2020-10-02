@@ -83,6 +83,7 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     self.autoHideRightButton = YES;
     self.editorContentViewHeight = 38.0;
     self.contentInset = UIEdgeInsetsMake(5.0, 6.0, 5.0, 6.0);
+    self.imageOnlyLeftButton = YES;
 
     // Since iOS 11, it is required to call -layoutSubviews before adding custom subviews
     // so private UIToolbar subviews don't interfere on the touch hierarchy
@@ -705,8 +706,13 @@ NSString * const SLKTextInputbarDidMoveNotification =   @"SLKTextInputbarDidMove
     }
     else {
         self.editorContentViewHC.constant = zero;
-        
+
         CGSize leftButtonSize = [self.leftButton imageForState:self.leftButton.state].size;
+
+        if (!self.imageOnlyLeftButton) {
+            [self.leftButton sizeToFit];
+            leftButtonSize = self.leftButton.frame.size;
+        }
         
         if (leftButtonSize.width > 0) {
             self.leftButtonHC.constant = roundf(leftButtonSize.height);
